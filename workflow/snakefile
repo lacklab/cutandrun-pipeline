@@ -1,0 +1,11 @@
+configfile: "config/config.yaml"
+
+include: "rules/common.smk"
+include: "rules/trim.smk"
+include: "rules/align.smk"
+include: "rules/peak.smk"
+include: "rules/deeptools.smk"
+
+rule all:
+    input:
+        outputs

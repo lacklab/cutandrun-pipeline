@@ -1,0 +1,32 @@
+name: cutandrun
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Alignment and Mapping Tools
+  - bowtie2
+  - samtools
+  - bedtools
+  - ucsc-bedclip
+  - picard
+
+  # Quality Control Tools
+  - trim-galore
+  - fastqc
+  - multiqc
+
+  # Peak Calling and Coverage Analysis Tools
+  - macs3
+  - deeptools
+  - ucsc-bedgraphtobigwig
+
+  # Workflow Management
+  - snakemake
+
+  # Python Libraries
+  - pandas
+  - pysam
+
+  # Essential Utilities
+  - python=3.10
