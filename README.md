@@ -88,7 +88,7 @@ The pipeline requires a **sample metadata file** in TSV format. Below is an exam
 
 ---
 
-## 📦 Configurations
+## 🎛️ Configurations
 The configuration file (`config/config.yaml`) specifies pipeline parameters. Below is an example:
 
 ```yaml
