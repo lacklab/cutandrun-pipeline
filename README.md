@@ -6,25 +6,56 @@ This repository contains a Snakemake pipeline for CUT&RUN data processing and an
 
 ## 📖 Overview
 
-This pipeline automates the following steps for CUT&RUN data analysis:
+This pipeline automates the steps involved in CUT&RUN data analysis, covering data preparation, alignment, peak calling, and quality control reporting.
 
-1. **Data Preparation and Quality Control:**
-   - Adapter trimming using `trim_galore`
-   - Quality control using `FastQC`
+### **1. Data Preparation and Quality Control**
+- Adapter trimming using `trim_galore` to remove sequencing adapters and low-quality bases.
+- Quality control of raw and trimmed reads using `FastQC`.
 
-2. **Alignment and BAM Processing:**
-   - Read alignment using `bowtie2`
-   - Sorting and indexing with `samtools`
-   - Quality assessment with `samtools idxstats`, `flagstat`, and `stats`
-   - Duplicate marking and removal using `picard`
+### **2. Alignment and BAM Processing**
+- Read alignment with `bowtie2`.
+- BAM file sorting and indexing using `samtools`.
+- Quality metrics generation with `samtools idxstats`, `flagstat`, and `stats`.
+- Duplicate marking and removal using `picard`.
 
-3. **Peak Calling and Signal Processing:**
-   - Peak calling using `MACS3` and `SEACR`
-   - BigWig file generation using `bedtools` and `bedGraphToBigWig`
+### **3. Peak Calling and Signal Processing**
+- Peak calling with `MACS3` and `SEACR` for identifying enriched regions.
+- Signal normalization and BigWig generation using `bedtools` and `bedGraphToBigWig`.
 
-4. **Data Visualization:**
-   - Quality metrics visualization using `deeptools`
-   - Fingerprint plots and PCA analysis for quality assessment
+### **4. Data Visualization**
+- Quality metrics visualization using `deeptools`.
+- **Fingerprint Plots:** Assess library complexity and duplication.
+- **PCA (Principal Component Analysis):** Visualize global sample similarity.
+- **Correlation Matrix:** Heatmap representation of sample correlations.
+
+### **5. Quality Control (QC) Metrics and Reporting**
+
+#### **FastQC Reports**
+- Evaluates sequence quality, GC content, and potential contaminants for both raw and trimmed reads.
+
+#### **Trimgalore Reports**
+- Provides adapter trimming efficiency metrics and post-trimming quality scores.
+
+#### **Samtools Metrics**
+- **flagstat:** Provides summary alignment statistics for raw, filtered, and deduplicated BAM files.
+- **idxstats:** Reports per-chromosome read distribution.
+- **stats:** Generates detailed alignment metrics across multiple processing stages.
+
+#### **Picard Metrics**
+- **MarkDuplicates:** Reports the number of duplicate reads detected and removed during BAM processing.
+
+#### **DeepTools Metrics**
+- **Fingerprint Plots:** Assess library complexity and sequencing bias.
+- **PCA (Principal Component Analysis):** Displays global similarity between samples.
+- **Correlation Matrix:** Provides a heatmap showing correlations across samples.
+
+#### **FRIP (Fraction of Reads in Peaks)**
+- **FRIP Score Calculation:** Fraction of reads overlapping identified peaks.
+- **Number of Peaks:** Total number of peaks identified during peak calling.
+- **Median Fragment Length:** Estimates fragment size distribution in the BAM files.
+
+#### **MultiQC Reporting**
+- **Centralized Quality Control Report:** All QC metrics are compiled into a single, interactive **MultiQC** HTML report for streamlined data interpretation.
 
 ---
 
