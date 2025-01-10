@@ -22,8 +22,13 @@ rule trim_adapters:
     output:
         trimmed_fq1="trimmed/{raw}_1.trimmed.fastq.gz",
         trimmed_fq2="trimmed/{raw}_2.trimmed.fastq.gz",
-        fastqc="qc/fastqc/{raw}_1_fastqc.html",
-        tfastqc="qc/trimgalore/{raw}_1.trimmed_fastqc.html"
+        fastqc1="qc/fastqc/{raw}_1_fastqc.html",
+        fastqc2="qc/fastqc/{raw}_2_fastqc.html",
+        t1fastqc="qc/trimgalore/{raw}_1.trimmed_fastqc.html",
+        t2fastqc="qc/trimgalore/{raw}_2.trimmed_fastqc.html",
+        t1report="qc/trimgalore/{raw}_1.fastq.gz_trimming_report.txt",
+        t2report="qc/trimgalore/{raw}_2.fastq.gz_trimming_report.txt"
+
     threads: 8
     shell:
         """

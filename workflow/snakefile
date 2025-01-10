@@ -5,6 +5,7 @@ include: "rules/trim.smk"
 include: "rules/align.smk"
 include: "rules/peak.smk"
 include: "rules/deeptools.smk"
+include: "rules/qc.smk"
 
 rule all:
     input:

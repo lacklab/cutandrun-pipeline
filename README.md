@@ -60,6 +60,7 @@ This pipeline automates the following steps for CUT&RUN data analysis:
 │   ├── trim.smk
 │   ├── align.smk
 │   ├── peak.smk
+│   ├── qc.smk
 │   └── deeptools.smk
 ├── data/                   # Raw sequencing data files (not included)
 ├── results/                # Output results directory
@@ -97,11 +98,9 @@ SAMPLES: config/samples.tsv
 OUTPUT:
     REF: hg38
     RUN:
-        QC: False
+        QC: True
         PEAKS: True
         BWS: True
-        FINGERPRINTS: True
-        BAMSUMMARY: True
     SAECR_MODE: 
         - stringent
         - relaxed

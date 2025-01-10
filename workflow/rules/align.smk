@@ -27,9 +27,9 @@ rule bam_process:
         "results/mapping/{raw}.raw.bam"
     output:
         bam="results/mapping/{raw}.target.sorted.bam",
-        idxstats="qc/samtools/idxstats/{raw}.idxstats",
-        flagstat="qc/samtools/flagstat/{raw}.flagstat",
-        stats="qc/samtools/stats/{raw}.stats"
+        idxstats="qc/samtools/idxstats/{raw}.target.idxstats",
+        flagstat="qc/samtools/flagstat/{raw}.target.flagstat",
+        stats="qc/samtools/stats/{raw}.target.stats"
     threads: 12
     params:
         fa=lambda wildcards: config["REFERENCES"][ref]["FA"]
@@ -198,9 +198,9 @@ rule bam_dedup:
         bam="results/mapping/{raw}.target.dedup.sorted.bam",
         interbam=temp("results/mapping/{raw}.target.dedup.bam"),
         metric="qc/picard/{raw}.target.dedup.MarkDuplicates.metrics.txt",
-        idxstats="qc/samtools/idxstats/{raw}.target.markdup.idxstats",
-        flagstat="qc/samtools/flagstat/{raw}.target.markdup.flagstat",
-        stats="qc/samtools/stats/{raw}.target.markdup.stats"
+        idxstats="qc/samtools/idxstats/{raw}.target.dedup.idxstats",
+        flagstat="qc/samtools/flagstat/{raw}.target.dedup.flagstat",
+        stats="qc/samtools/stats/{raw}.target.dedup.stats"
     threads: 12
     params:
         fa=lambda wildcards: config["REFERENCES"][ref]["FA"]

@@ -5,8 +5,8 @@ rule macs:
     input:
         get_macs_i
     output:
-        "results/peaks/{raw}_peaks.xls",
-        "results/peaks/{raw}_peaks.narrowPeak"
+        narrowpeak="results/peaks/{raw}_peaks.narrowPeak",
+        qc="qc/macs/{raw}_peaks.xls"
     threads:
         16
     params:
@@ -17,6 +17,8 @@ rule macs:
             {params}  \
             -n results/peaks/{wildcards.raw} \
             -q 0.1 -g hs -f BAMPE
+
+        mv results/peaks/{wildcards.raw}_peaks.xls {output.qc}
         """
 
 
@@ -69,11 +71,6 @@ rule seacr_stringent:
             non stringent \
             results/peaks/{wildcards.raw}.seacr.peaks
         """
-
-
-
-
-
 
 
 rule seacr_relaxed:

@@ -74,6 +74,71 @@ def get_group_multibam(wildcards):
 			"results/mapping/{raw}.target.dedup.sorted.bam", 
 			raw=samples.loc[samples['Name'] == wildcards.group, "Raw"].tolist()
 		)
+
+def get_multiqc(wildcards):
+    out = []
+    
+    # List of common quality control file types and tools
+    qc_tools = {
+        "fastqc": [
+            "{raw}_1_fastqc.html", 
+            "{raw}_2_fastqc.html"
+        ],
+        "trimgalore": [
+            "{raw}_1.fastq.gz_trimming_report.txt",
+            "{raw}_2.fastq.gz_trimming_report.txt",
+            "{raw}_1.trimmed_fastqc.html",
+            "{raw}_2.trimmed_fastqc.html"
+        ],
+        "samtools": [
+            "flagstat/{raw}.target.flagstat",
+            "flagstat/{raw}.target.filtered.flagstat",
+            "flagstat/{raw}.target.markdup.flagstat",
+            "flagstat/{raw}.target.dedup.flagstat",
+            "idxstats/{raw}.target.idxstats",
+            "idxstats/{raw}.target.filtered.idxstats",
+            "idxstats/{raw}.target.markdup.idxstats",
+            "idxstats/{raw}.target.dedup.idxstats",
+            "stats/{raw}.target.stats",
+            "stats/{raw}.target.filtered.stats",
+            "stats/{raw}.target.markdup.stats",
+            "stats/{raw}.target.dedup.stats"
+        ],
+        "picard": [
+            "{raw}.target.markdup.MarkDuplicates.metrics.txt",
+            "{raw}.target.dedup.MarkDuplicates.metrics.txt"
+        ],
+        "bowtie2": [
+            "{raw}.bowtie2.log"
+        ],
+        "macs": [
+            "{raw}_peaks.xls"
+        ],
+        "deeptools": [
+            "all_bam.bamSummary.npz",
+            "all_bam.plotCorrelation.mat.tab",
+            "all_bam.plotFingerprint.qcmetrics.txt",
+            "all_bam.plotFingerprint.raw.txt",
+            "all_bam.plotPCA.tab"
+        ]
+    }
+
+    # Iterate through each sample and append all files based on the defined templates
+    for _, row in samples.iterrows():
+        raw = row['Raw']
+        
+        # Generate output paths for each tool and file pattern
+        for tool, patterns in qc_tools.items():
+            for pattern in patterns:
+                out.append(f"qc/{tool}/{pattern.format(raw=raw)}")
+
+    # Add FRIP score file (outside the loop as a single file)
+    out.append("qc/frip_mqc.tsv")
+    
+    return expand(out)
+
+
+
 ##########
 
 ref = config["OUTPUT"]["REF"]
@@ -101,23 +166,11 @@ if config["OUTPUT"]["RUN"]["PEAKS"]:
 
 ##########
 
-
 if config["OUTPUT"]["RUN"]["BWS"]:
 	outputs += [
 		f"results/bigwig/{row['Raw']}.bw"
 		for i, row in samples.iterrows()
 	]
 
-if config["OUTPUT"]["RUN"]["FINGERPRINTS"]:
-	outputs += [
-		f"qc/deeptools/{name}.plotFingerprint.pdf"
-		for name in samples['Name'].unique()
-	]
-
-if config["OUTPUT"]["RUN"]["BAMSUMMARY"]:
-	outputs += [
-		f"qc/deeptools/all_bam.bamSummary.npz"
-		for name in samples['Name'].unique()
-	]
 
 # <<< OUTPUTS <<<
