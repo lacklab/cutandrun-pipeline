@@ -10,7 +10,6 @@ rule align_bowtie2:
     threads: 32
     shell:
         """
-
         bowtie2 \
             -x {params.idx} \
             -1 {input.fq1} -2 {input.fq2} \
