@@ -4,6 +4,6 @@
 #SBATCH -p long,big-mem,normal,express
 
 source ~/.bashrc
-conda activate cutandrun
+conda activate cutandrun # TODO: add Homer to env
 
-snakemake --profile profile/
+snakemake -n --profile profile/

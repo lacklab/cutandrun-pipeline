@@ -25,10 +25,7 @@ rule bam_process:
     input:
         "results/mapping/{raw}.raw.bam"
     output:
-        bam="results/mapping/{raw}.target.sorted.bam",
-        idxstats="qc/samtools/idxstats/{raw}.target.idxstats",
-        flagstat="qc/samtools/flagstat/{raw}.target.flagstat",
-        stats="qc/samtools/stats/{raw}.target.stats"
+        bam="results/mapping/{raw}.target.sorted.bam"
     threads: 12
     params:
         fa=lambda wildcards: config["REFERENCES"][ref]["FA"]
@@ -45,26 +42,8 @@ rule bam_process:
             index \
             -@ 1 \
             {output.bam}
-
-        samtools \
-            idxstats \
-            --threads 0 \
-            {output.bam} \
-            > {output.idxstats}
-
-        samtools \
-            flagstat \
-            --threads 1 \
-            {output.bam} \
-            > {output.flagstat}
-
-        samtools \
-            stats \
-            --threads 1 \
-            --reference {params.fa} \
-            {output.bam} \
-            > {output.stats}
         """
+
 
 
 
@@ -73,10 +52,7 @@ rule bam_filter:
         "results/mapping/{raw}.target.sorted.bam"
     output:
         bam="results/mapping/{raw}.target.filtered.sorted.bam",
-        interbam=temp("results/mapping/{raw}.target.filtered.bam"),
-        idxstats="qc/samtools/idxstats/{raw}.target.filtered.idxstats",
-        flagstat="qc/samtools/flagstat/{raw}.target.filtered.flagstat",
-        stats="qc/samtools/stats/{raw}.target.filtered.stats"
+        interbam=temp("results/mapping/{raw}.target.filtered.bam")
     threads: 12
     params:
         fa=lambda wildcards: config["REFERENCES"][ref]["FA"]
@@ -100,26 +76,8 @@ rule bam_filter:
             index \
             -@ 1 \
             {output.bam}
-
-        samtools \
-            idxstats \
-            --threads 0 \
-            {output.bam} \
-            > {output.idxstats}
-
-        samtools \
-            flagstat \
-            --threads 1 \
-            {output.bam} \
-            > {output.flagstat}
-
-        samtools \
-            stats \
-            --threads 1 \
-            --reference {params.fa} \
-            {output.bam} \
-            > {output.stats}
         """
+
 
 
 rule bam_markdup:
@@ -129,10 +87,7 @@ rule bam_markdup:
         bam="results/mapping/{raw}.target.markdup.sorted.bam",
         rg=temp("results/mapping/{raw}.target.filtered.rg.bam"),
         interbam=temp("results/mapping/{raw}.target.markdup.bam"),
-        metric="qc/picard/{raw}.target.markdup.MarkDuplicates.metrics.txt",
-        idxstats="qc/samtools/idxstats/{raw}.target.markdup.idxstats",
-        flagstat="qc/samtools/flagstat/{raw}.target.markdup.flagstat",
-        stats="qc/samtools/stats/{raw}.target.markdup.stats"
+        metric="qc/picard/{raw}.target.markdup.MarkDuplicates.metrics.txt"
     params:
         fa=lambda wildcards: config["REFERENCES"][ref]["FA"]
     shell:
@@ -166,28 +121,7 @@ rule bam_markdup:
             index \
             -@ 1 \
             {output.bam}
-
-        samtools \
-            idxstats \
-            --threads 0 \
-            {output.bam} \
-            > {output.idxstats}
-
-        samtools \
-            flagstat \
-            --threads 1 \
-            {output.bam} \
-            > {output.flagstat}
-
-        samtools \
-            stats \
-            --threads 1 \
-            --reference {params.fa} \
-            {output.bam} \
-            > {output.stats}
-
         """
-
 
 
 rule bam_dedup:
@@ -196,10 +130,7 @@ rule bam_dedup:
     output:
         bam="results/mapping/{raw}.target.dedup.sorted.bam",
         interbam=temp("results/mapping/{raw}.target.dedup.bam"),
-        metric="qc/picard/{raw}.target.dedup.MarkDuplicates.metrics.txt",
-        idxstats="qc/samtools/idxstats/{raw}.target.dedup.idxstats",
-        flagstat="qc/samtools/flagstat/{raw}.target.dedup.flagstat",
-        stats="qc/samtools/stats/{raw}.target.dedup.stats"
+        metric="qc/picard/{raw}.target.dedup.MarkDuplicates.metrics.txt"
     threads: 12
     params:
         fa=lambda wildcards: config["REFERENCES"][ref]["FA"]
@@ -225,23 +156,7 @@ rule bam_dedup:
             index \
             -@ 1 \
             {output.bam}
-
-        samtools \
-            idxstats \
-            --threads 0 \
-            {output.bam} \
-            > {output.idxstats}
-
-        samtools \
-            flagstat \
-            --threads 1 \
-            {output.bam} \
-            > {output.flagstat}
-
-        samtools \
-            stats \
-            --threads 1 \
-            --reference {params.fa} \
-            {output.bam} \
-            > {output.stats}
         """
+
+
+

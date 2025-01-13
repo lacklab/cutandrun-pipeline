@@ -8,6 +8,15 @@ samples = pd.read_table(config["SAMPLES"])
 samples["Raw"] = samples["Name"] + "." + samples["Unit"].astype(str)
 
 
+assets = {}
+with open("assets/annotatepeaks.asset", "r") as f:
+	assets["annotatepeaks"]	= ""
+	for line in f.readlines():
+		assets["annotatepeaks"]	+= line
+
+
+
+##########
 
 def get_fqs(wildcards):
 
@@ -15,9 +24,6 @@ def get_fqs(wildcards):
 	fq2 = samples.loc[samples["Raw"] == wildcards.raw, "Fastq2"].unique()[0]
 	
 	return fq1, fq2
-
-
-##########
 
 
 def get_control(wildcards):
@@ -91,18 +97,18 @@ def get_multiqc(wildcards):
             "{raw}_2.trimmed_fastqc.html"
         ],
         "samtools": [
-            "flagstat/{raw}.target.flagstat",
-            "flagstat/{raw}.target.filtered.flagstat",
-            "flagstat/{raw}.target.markdup.flagstat",
-            "flagstat/{raw}.target.dedup.flagstat",
-            "idxstats/{raw}.target.idxstats",
-            "idxstats/{raw}.target.filtered.idxstats",
-            "idxstats/{raw}.target.markdup.idxstats",
-            "idxstats/{raw}.target.dedup.idxstats",
-            "stats/{raw}.target.stats",
-            "stats/{raw}.target.filtered.stats",
-            "stats/{raw}.target.markdup.stats",
-            "stats/{raw}.target.dedup.stats"
+            "flagstat/{raw}.target.sorted.flagstat",
+            "flagstat/{raw}.target.filtered.sorted.flagstat",
+            "flagstat/{raw}.target.markdup.sorted.flagstat",
+            "flagstat/{raw}.target.dedup.sorted.flagstat",
+            "idxstats/{raw}.target.sorted.idxstats",
+            "idxstats/{raw}.target.filtered.sorted.idxstats",
+            "idxstats/{raw}.target.markdup.sorted.idxstats",
+            "idxstats/{raw}.target.dedup.sorted.idxstats",
+            "stats/{raw}.target.sorted.stats",
+            "stats/{raw}.target.filtered.sorted.stats",
+            "stats/{raw}.target.markdup.sorted.stats",
+            "stats/{raw}.target.dedup.sorted.stats"
         ],
         "picard": [
             "{raw}.target.markdup.MarkDuplicates.metrics.txt",
@@ -120,16 +126,24 @@ def get_multiqc(wildcards):
             "all_bam.plotFingerprint.qcmetrics.txt",
             "all_bam.plotFingerprint.raw.txt",
             "all_bam.plotPCA.tab"
+        ],
+        "homer":
+        [
+            "{raw}_annotatepeaks.txt"
         ]
     }
 
     # Iterate through each sample and append all files based on the defined templates
     for _, row in samples.iterrows():
         raw = row['Raw']
+
+        is_control = row['Control'] == '-'
         
         # Generate output paths for each tool and file pattern
         for tool, patterns in qc_tools.items():
             for pattern in patterns:
+                if (tool in ['macs', 'homer']) and (not is_control):
+                    continue
                 out.append(f"qc/{tool}/{pattern.format(raw=raw)}")
 
     # Add FRIP score file (outside the loop as a single file)

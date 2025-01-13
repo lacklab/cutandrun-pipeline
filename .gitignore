@@ -8,5 +8,6 @@ raw-data/
 logs/
 qc/
 trimmed/
+trial/
 
 slurm-*

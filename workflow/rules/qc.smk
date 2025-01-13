@@ -1,5 +1,65 @@
 
 
+
+rule bam_qc:
+    input:
+        "results/mapping/{bam}.bam"
+    output:
+        idxstats="qc/samtools/idxstats/{bam}.idxstats",
+        flagstat="qc/samtools/flagstat/{bam}.flagstat",
+        stats="qc/samtools/stats/{bam}.stats"
+    params:
+        fa=lambda wildcards: config["REFERENCES"][ref]["FA"]
+    shell:
+        """
+        samtools \
+            idxstats \
+            --threads 0 \
+            {input} \
+            > {output.idxstats}
+
+        samtools \
+            flagstat \
+            --threads 1 \
+            {input} \
+            > {output.flagstat}
+
+        samtools \
+            stats \
+            --threads 1 \
+            --reference {params.fa} \
+            {input} \
+            > {output.stats}
+        """
+
+
+
+################################################################################
+
+
+from collections import Counter
+rule annotatepeaks_qc:
+	input:
+		"results/homer/{raw}_annotatepeaks.txt"
+	output:
+		"qc/homer/{raw}_summary_mqc.txt"
+	run:
+		header = ["INTERGENIC", "INTRON ", "PROMOTER-TSS ", "EXON ", "3' UTR ", "5' UTR ", "TTS ", "NON-CODING "]
+		with open(output[0], "w") as f:
+			f.write(assets["annotatepeaks"])
+			tmp = pd.read_table(input[0])
+			if tmp.shape[0] == 0:
+				nAnnot = dict(zip(header, [8]*0))
+			else:
+				tmp["shortAnn"] = tmp["Annotation"].str.split("(", expand=True)[0].str.upper()
+				nAnnot = Counter(tmp["shortAnn"])
+			for k in header:
+				f.write(f"{k}\t{nAnnot[k]}\n")
+
+
+
+
+
 rule frip:
     input:
         bams=expand("results/mapping/{raw}.target.dedup.sorted.bam", raw=samples["Raw"].tolist()),   # Fetch BAM files for FRIP calculation
@@ -53,5 +113,5 @@ rule multiqc:
         "qc/multiqc_report.html"
     shell:
         """
-        cd qc/ && multiqc .
+        cd qc/ && multiqc . --filename
         """
